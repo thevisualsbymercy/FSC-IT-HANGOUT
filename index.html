@@ -53,10 +53,10 @@ button:disabled{opacity:.5}:focus-visible{outline:3px solid var(--gold);outline-
 <script>
 /* ====== PASTE YOUR FIREBASE VALUES BETWEEN THE QUOTES ====== */
 var CFG = {
-  apiKey: "PASTE_HERE",
-  authDomain: "PASTE_HERE",
-  projectId: "PASTE_HERE",
-  appId: "PASTE_HERE"
+  apiKey: "AIzaSyDicZFEniLotoBZyGv3kAM840bbbPvuAME",
+  authDomain: "fsc-it-hangout.firebaseapp.com",
+  projectId: "fsc-it-hangout",
+  appId: "1:843038589358:web:ec59765ce0787119b0083f"
 };
 /* =========================================================== */
 var FEE = "₦3,500";
@@ -65,17 +65,16 @@ function $(s){ return document.querySelector(s); }
 function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function msg(title, text){ app.innerHTML = '<section class="panel"><h2>' + title + '</h2><p>' + text + '</p></section>'; }
 
-if (Object.keys(CFG).some(function(k){ return /PASTE/.test(CFG[k]); })) {
-  msg('Almost there', 'The Firebase settings have not been added yet. Open <b>index.html</b> in a text editor, paste your four Firebase values into the <b>CFG</b> block at the top, save, and upload the site again.');
-} else if (typeof firebase === 'undefined') {
+var NOCFG = Object.keys(CFG).some(function(k){ return /PASTE/.test(CFG[k]); });
+if (!NOCFG && typeof firebase === 'undefined') {
   msg('Could not load', 'Check your internet connection and refresh the page.');
 } else {
   try { start(); } catch (e) { msg('Something went wrong', esc(e.message)); }
 }
 
 function start() {
-  firebase.initializeApp(CFG);
-  var db = firebase.firestore(), auth = firebase.auth();
+  var db = null, auth = null;
+  if (!NOCFG) { firebase.initializeApp(CFG); db = firebase.firestore(); auth = firebase.auth(); }
   var q = new URLSearchParams(location.search);
   var base = location.origin + location.pathname.replace(/\/admin\/?$/, '/').replace(/index\.html$/, '');
   var isAdmin = q.has('admin') || location.hash === '#admin' || /\/admin\/?$/.test(location.pathname);
@@ -83,11 +82,12 @@ function start() {
   var newCode = function(){ var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = 'FSC27-'; var r = crypto.getRandomValues(new Uint8Array(6)); for (var i = 0; i < 6; i++) s += a[r[i] % 32]; return s; };
   var waLink = function(t){ return 'https://wa.me/' + t.phone + '?text=' + encodeURIComponent('Hi ' + t.name + '! 🎉 Your ticket for After I.T Hangout (28th Nov, 2PM, Lions’ Lounge) is confirmed.\nOpen and download your ticket: ' + base + '?t=' + t.id); };
 
-  if (isAdmin) admin(); else if (q.get('t')) ticketPage(q.get('t')); else home();
+  if (NOCFG && (isAdmin || q.get('t'))) msg('Not connected yet', 'The admin dashboard and tickets switch on once the four Firebase values are pasted into the CFG block at the top of this file.');
+  else if (isAdmin) admin(); else if (q.get('t')) ticketPage(q.get('t')); else home();
 
   /* ---------- GUEST PAGE ---------- */
   function home() {
-    app.innerHTML = '<section class="hero"><small>FSC Class’ 27 presents</small><h1>AFTER I.T<br>HANGOUT</h1><span class="tag">Good Vibes, Great People!</span></section>' +
+    app.innerHTML = (NOCFG ? '<div class="pay" style="margin-bottom:12px">Preview mode: this is how the site looks. Add your Firebase values to switch on ticket requests.</div>' : '') + '<section class="hero"><small>FSC Class’ 27 presents</small><h1>AFTER I.T<br>HANGOUT</h1><span class="tag">Good Vibes, Great People!</span></section>' +
     '<section class="facts"><div class="fact"><span>Date</span>28th Nov 2026</div><div class="fact"><span>Time</span>2PM</div><div class="fact"><span>Venue</span>Lions’ Lounge, Under G, Ogbomoso</div><div class="fact"><span>Fee</span>' + FEE + '</div></section>' +
     '<section class="panel"><h2>Get your ticket</h2><div class="pay">1. Send ' + FEE + ' to:<br>Faith Oluwanifemi Alade · 8162265273 · PalmPay<br>2. Fill the form below and tap “Get ticket”.</div>' +
     '<form id="f"><label for="n">Full name</label><input id="n" autocomplete="name"><label for="p">WhatsApp number</label><input id="p" inputmode="tel" placeholder="08012345678">' +
@@ -99,6 +99,7 @@ function start() {
       var name = $('#n').value.trim(), digits = $('#p').value.replace(/\D/g, '');
       if (name.length < 2) { $('#e').textContent = 'Enter your full name.'; return; }
       if (digits.length < 10) { $('#e').textContent = 'Enter a valid WhatsApp number.'; return; }
+      if (!db) { $('#e').textContent = 'Preview only: not connected to Firebase yet, so nothing was saved.'; return; }
       $('#b').disabled = true; $('#e').textContent = '';
       var id = newCode();
       db.collection('tickets').doc(id).set({ name: name, phone: normPhone($('#p').value), status: 'pending', created: firebase.firestore.FieldValue.serverTimestamp() })
