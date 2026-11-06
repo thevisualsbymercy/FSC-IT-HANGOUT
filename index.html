@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>After I.T Hangout</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6f7ec;--ink:#16301f;--green:#1f6b3a;--lime:#8be36a;--gold:#f2b92a;--line:#c4e3cf;--muted:#4d6b58}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.5 Nunito,system-ui,sans-serif}
+main{max-width:880px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3{font-family:"Lilita One",Impact,sans-serif;font-weight:400;margin:0}
+.hero{text-align:center;padding:20px 0 6px}.hero small{font-weight:800;color:var(--green);font-size:1.1rem}
+.hero h1{font-size:clamp(2.6rem,9vw,4.6rem);line-height:1;color:var(--lime);-webkit-text-stroke:2px #0d2415;paint-order:stroke fill;text-shadow:3px 3px 0 #0d2415;margin:6px 0 12px}
+.tag{display:inline-block;background:#fff;padding:6px 16px;font-weight:800;transform:rotate(-2deg)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:20px 0}
+.fact{background:var(--gold);color:#2b2100;padding:10px 14px;font-weight:800;border-radius:4px}.fact span{display:block;font-weight:600;font-size:.85rem}
+.panel{background:#fff;border:1px solid var(--line);padding:20px;border-radius:10px;margin-bottom:20px}
+h2{font-size:1.6rem;margin-bottom:10px;color:var(--green)}
+label{display:block;font-weight:800;margin:12px 0 4px}
+input{width:100%;padding:12px;border:2px solid var(--line);border-radius:8px;font:inherit}
+button,.btn{font:inherit;font-weight:800;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--green);color:#fff;text-decoration:none;display:inline-block}
+button.big{padding:13px 20px;margin-top:16px}button.wa{background:#25d366;color:#04230f}button.no{background:#c0392b}button.gray{background:#4d6b58}
+button:disabled{opacity:.5}:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.note{font-size:.88rem;color:var(--muted)}.err{color:#c0392b;font-weight:700;min-height:1.3em}
+.pay{background:#fff8e1;border:2px dashed var(--gold);padding:12px 14px;border-radius:8px;font-weight:700}
+.ticketwrap{overflow-x:auto;padding:4px}
+.ticket{width:760px;height:300px;display:flex;background:linear-gradient(135deg,#dff7e6,#b9ecc8);border-radius:16px;overflow:hidden;position:relative}
+.tmain{flex:1;padding:20px 22px;display:flex;flex-direction:column}.club{font-weight:800;color:#1f6b3a}
+.tmain h3{font-size:2.3rem;line-height:1;margin:2px 0 8px;color:#8be36a;-webkit-text-stroke:1.5px #0d2415;paint-order:stroke fill;text-shadow:2px 2px 0 #0d2415}
+.guest{background:#fff;padding:6px 12px;font-weight:800;font-size:1.15rem;border-radius:4px;width:max-content;max-width:100%}
+.tmeta{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.85rem;font-weight:800}.tmeta b{display:block;font-weight:600;color:#2f5b40;font-size:.72rem}
+.tstub{width:200px;background:#1d4a2c;color:#fff;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-left:3px dashed #f2b92a;text-align:center}
+.badge{background:#f2b92a;color:#2b2100;font-weight:800;padding:2px 10px;border-radius:3px;font-size:.85rem}
+.qr{background:#fff;padding:6px;border-radius:6px;width:104px;height:104px}.tstub code{font-size:.82rem;color:#f2b92a;font-weight:800}
+.used{background:#c0392b;color:#fff;font-weight:800;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center}
+.ok{background:#1f6b3a;color:#fff;font-weight:800;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
+.row b{font-size:1.05rem}.row small{display:block;color:var(--muted)}.acts{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{background:#dff0e5;color:var(--ink)}.tabs button.on{background:var(--green);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.stat{background:#dff0e5;padding:10px;border-radius:8px;font-weight:800}.stat span{display:block;font-size:1.6rem;font-family:"Lilita One",sans-serif;font-weight:400}
+</style>
+</head>
+<body>
+<main id="app"></main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+/* ====== 1. PASTE YOUR FIREBASE CONFIG HERE (see setup steps) ====== */
+const CFG = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};
+/* ================================================================= */
+const FEE = "₦3,500";
+firebase.initializeApp(CFG);
+const db = firebase.firestore(), auth = firebase.auth();
+const app = document.getElementById('app'), $ = s => document.querySelector(s);
+const q = new URLSearchParams(location.search);
+const base = location.origin + location.pathname;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const normPhone = p => { p = p.replace(/\D/g,''); return p.startsWith('234') ? p : '234' + p.replace(/^0/,''); };
+const newCode = () => 'FSC27-' + Array.from(crypto.getRandomValues(new Uint8Array(6)), b => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b % 32]).join('');
+const waLink = t => 'https://wa.me/' + t.phone + '?text=' + encodeURIComponent(
+  'Hi ' + t.name + '! 🎉 Your ticket for After I.T Hangout (28th Nov, 2PM, Lions’ Lounge) is confirmed.\nOpen and download your ticket: ' + base + '?t=' + t.id);
+
+if (q.has('admin')) admin(); else if (q.get('t')) ticketPage(q.get('t')); else home();
+
+/* ---------- PUBLIC PAGE ---------- */
+function home() {
+  app.innerHTML = `
+  <section class="hero"><small>FSC Class’ 27 presents</small><h1>AFTER I.T<br>HANGOUT</h1><span class="tag">Good Vibes, Great People!</span></section>
+  <section class="facts">
+    <div class="fact"><span>Date</span>28th Nov 2026</div><div class="fact"><span>Time</span>2PM</div>
+    <div class="fact"><span>Venue</span>Lions’ Lounge, Under G, Ogbomoso</div><div class="fact"><span>Fee</span>${FEE}</div></section>
+  <section class="panel"><h2>Get your ticket</h2>
+    <div class="pay">1. Send ${FEE} to:<br>Faith Oluwanifemi Alade · 8162265273 · PalmPay<br>2. Fill the form below and tap “Get ticket”.</div>
+    <form id="f"><label for="n">Full name</label><input id="n" autocomplete="name">
+    <label for="p">WhatsApp number</label><input id="p" inputmode="tel" placeholder="08012345678">
+    <div class="err" id="e" role="alert"></div>
+    <button class="big" id="b">Get ticket</button>
+    <p class="note">Your ticket appears on the next page once your payment is confirmed. Keep that page open or save its link.</p></form></section>`;
+  $('#f').onsubmit = async ev => {
+    ev.preventDefault();
+    const name = $('#n').value.trim(), digits = $('#p').value.replace(/\D/g,'');
+    if (name.length < 2) return $('#e').textContent = 'Enter your full name.';
+    if (digits.length < 10) return $('#e').textContent = 'Enter a valid WhatsApp number.';
+    $('#b').disabled = true; $('#e').textContent = '';
+    const id = newCode();
+    try {
+      await db.collection('tickets').doc(id).set({name, phone: normPhone($('#p').value), status: 'pending', created: firebase.firestore.FieldValue.serverTimestamp()});
+      location.search = '?t=' + id;
+    } catch (e) { $('#e').textContent = 'Could not submit. Check your network and try again.'; $('#b').disabled = false; }
+  };
+}
+
+/* ---------- TICKET PAGE ---------- */
+function ticketPage(id) {
+  let last = null, user = null;
+  const draw = () => {
+    if (last === null) { app.innerHTML = '<section class="panel"><p>Loading…</p></section>'; return; }
+    if (!last.exists) { app.innerHTML = '<section class="panel"><h2>Ticket not found</h2><p>Check the link you were sent.</p></section>'; return; }
+    const t = last.data();
+    if (t.status === 'pending') { app.innerHTML = `<section class="panel"><h2>Payment being confirmed</h2><p>Hi ${esc(t.name)}, we have your request. This page updates by itself when you are approved. Save this link: <b>${esc(base + '?t=' + id)}</b></p></section>`; return; }
+    if (t.status === 'rejected') { app.innerHTML = '<section class="panel"><h2>Request not approved</h2><p>We could not confirm your payment. Contact the organisers.</p></section>'; return; }
+    app.innerHTML = `${t.status === 'used' ? '<div class="used">ALREADY USED. Do not admit.</div>' : (user ? '<div class="ok">VALID TICKET</div>' : '')}
+    <div class="ticketwrap"><div class="ticket" id="t"><div class="tmain"><div class="club">FSC Class’ 27 presents</div><h3>AFTER I.T HANGOUT</h3>
+    <div class="guest">${esc(t.name)}</div><div class="tmeta"><div><b>Date</b>28th Nov 2026</div><div><b>Time</b>2PM</div>
+    <div><b>Venue</b>Lions’ Lounge, Under G, Ogbomoso</div><div><b>Music</b>MC Mayor · DJ Starry</div></div></div>
+    <div class="tstub"><span class="badge">ADMIT ONE</span><div class="qr" id="qr"></div><code>${esc(id)}</code></div></div></div>
+    <p><button id="dl" class="big">Download ticket</button> ${user && t.status === 'approved' ? '<button id="use" class="big no">Mark as used</button>' : ''}</p>`;
+    new QRCode($('#qr'), {text: base + '?t=' + id, width: 92, height: 92});
+    $('#dl').onclick = () => html2canvas($('#t'), {scale: 2, backgroundColor: null}).then(c => { const a = document.createElement('a'); a.href = c.toDataURL(); a.download = id + '.png'; a.click(); });
+    if ($('#use')) $('#use').onclick = () => db.collection('tickets').doc(id).update({status: 'used'});
+  };
+  db.collection('tickets').doc(id).onSnapshot(d => { last = d; draw(); }, () => { last = {exists: false}; draw(); });
+  auth.onAuthStateChanged(u => { user = u; if (last) draw(); });
+}
+
+/* ---------- ADMIN ---------- */
+function admin() { auth.onAuthStateChanged(u => u ? dash() : login()); }
+function login() {
+  app.innerHTML = `<section class="panel"><h2>Admin login</h2><form id="f"><label for="em">Email</label><input id="em" type="email" autocomplete="username">
+  <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><div class="err" id="e"></div><button class="big">Log in</button></form></section>`;
+  $('#f').onsubmit = ev => { ev.preventDefault(); auth.signInWithEmailAndPassword($('#em').value.trim(), $('#pw').value).catch(() => $('#e').textContent = 'Wrong email or password.'); };
+}
+function dash() {
+  let rows = [], tab = 'pending', term = '';
+  const paint = () => {
+    const c = s => rows.filter(r => r.status === s).length;
+    const list = rows.filter(r => (tab === 'all' || r.status === tab) && (r.name + r.id + r.phone).toLowerCase().includes(term));
+    app.innerHTML = `<section class="panel"><div class="row" style="border:0;padding:0"><h2>Admin</h2><button class="gray" id="out">Log out</button></div>
+    <div class="stats"><div class="stat"><span>${c('pending')}</span>Pending</div><div class="stat"><span>${c('approved') + c('used')}</span>Approved</div><div class="stat"><span>${c('used')}</span>Checked in</div><div class="stat"><span>₦${((c('approved') + c('used')) * 3500).toLocaleString()}</span>Expected</div></div>
+    <div class="tabs">${['pending','approved','used','rejected','all'].map(s => `<button data-tab="${s}" class="${tab === s ? 'on' : ''}">${s}</button>`).join('')}</div>
+    <input id="s" placeholder="Search name, number or ticket ID" value="${esc(term)}">
+    ${list.map(r => `<div class="row"><div><b>${esc(r.name)}</b><small>${esc(r.phone)} · ${esc(r.id)}${r.created ? ' · ' + r.created.toDate().toLocaleString() : ''}</small></div><div class="acts">
+      ${r.status === 'pending' || r.status === 'rejected' ? `<button class="wa" data-a="ok" data-id="${r.id}">Approve &amp; send</button>` : ''}
+      ${r.status === 'pending' ? `<button class="no" data-a="no" data-id="${r.id}">Reject</button>` : ''}
+      ${r.status === 'approved' ? `<button class="wa" data-a="send" data-id="${r.id}">Send on WhatsApp</button><button data-a="use" data-id="${r.id}">Mark used</button>` : ''}
+      ${r.status === 'used' ? '<span class="badge">Checked in</span>' : ''}</div></div>`).join('') || '<p class="note">Nothing here yet.</p>'}</section>`;
+    $('#out').onclick = () => auth.signOut();
+    $('#s').oninput = e => { term = e.target.value.toLowerCase(); paint(); $('#s').focus(); $('#s').setSelectionRange(term.length, term.length); };
+    document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; paint(); });
+    document.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+      const r = rows.find(x => x.id === b.dataset.id), a = b.dataset.a, ref = db.collection('tickets').doc(r.id);
+      if (a === 'ok') { window.open(waLink(r), '_blank'); ref.update({status: 'approved'}); }
+      if (a === 'send') window.open(waLink(r), '_blank');
+      if (a === 'no') ref.update({status: 'rejected'});
+      if (a === 'use') ref.update({status: 'used'});
+    });
+  };
+  db.collection('tickets').orderBy('created', 'desc').onSnapshot(s => { rows = s.docs.map(d => ({id: d.id, ...d.data()})); paint(); },
+    () => { app.innerHTML = '<section class="panel"><h2>No access</h2><p>This account is not the admin account.</p><button id="out">Log out</button></section>'; $('#out').onclick = () => auth.signOut(); });
+}
+</script>
+</body>
+</html>
