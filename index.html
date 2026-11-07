@@ -19,13 +19,15 @@ a{color:var(--green);font-weight:700}
 .panel{background:#fff;border:1px solid var(--line);padding:20px;border-radius:10px;margin-bottom:20px}
 h2{font-size:1.6rem;margin-bottom:10px;color:var(--green)}
 label{display:block;font-weight:800;margin:12px 0 4px}
-input{width:100%;padding:12px;border:2px solid var(--line);border-radius:8px;font:inherit}
+input,select{width:100%;padding:12px;border:2px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
 button{font:inherit;font-weight:800;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;background:var(--green);color:#fff}
 button.big{padding:13px 20px;margin-top:16px}button.wa{background:#25d366;color:#04230f}button.no{background:#c0392b}button.gray{background:#4d6b58}
+button.rc{background:#8a5a00}button.rm{background:transparent;color:#c0392b;border:2px solid #c0392b}
 button:disabled{opacity:.5}:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .note{font-size:.88rem;color:var(--muted)}.err{color:#c0392b;font-weight:700;min-height:1.3em}
-.pay{background:#fff8e1;border:2px dashed var(--gold);padding:12px 14px;border-radius:8px;font-weight:700}
-.ticketwrap{overflow-x:auto;padding:4px}
+.pay{background:#fff8e1;border:2px dashed var(--gold);padding:12px 14px;border-radius:8px;font-weight:700;margin-top:10px}
+.pay button{padding:4px 12px;margin-left:6px}
+.ticketwrap{overflow-x:auto;padding:4px;margin-bottom:6px}
 .ticket{width:760px;height:300px;display:flex;background:linear-gradient(135deg,#dff7e6,#b9ecc8);border-radius:16px;overflow:hidden}
 .tmain{flex:1;padding:20px 22px;display:flex;flex-direction:column}.club{font-weight:800;color:#1f6b3a}
 .tmain h3{font-size:2.3rem;line-height:1;margin:2px 0 8px;color:#8be36a;-webkit-text-stroke:1.5px #0d2415;paint-order:stroke fill;text-shadow:2px 2px 0 #0d2415}
@@ -34,13 +36,15 @@ button:disabled{opacity:.5}:focus-visible{outline:3px solid var(--gold);outline-
 .tstub{width:200px;background:#1d4a2c;color:#fff;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-left:3px dashed #f2b92a;text-align:center}
 .badge{background:#f2b92a;color:#2b2100;font-weight:800;padding:2px 10px;border-radius:3px;font-size:.85rem}
 .qr{background:#fff;padding:6px;border-radius:6px;width:104px;height:104px}.tstub code{font-size:.82rem;color:#f2b92a;font-weight:800}
-.bn{font-weight:800;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center}.used{background:#c0392b}.ok{background:#1f6b3a}
+.bn{font-weight:800;color:#fff;padding:12px;border-radius:8px;margin:14px 0 8px;text-align:center}.used{background:#c0392b}.ok{background:#1f6b3a}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
 .row small{display:block;color:var(--muted)}.acts{display:flex;gap:6px;flex-wrap:wrap}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{background:var(--chip);color:var(--ink)}.tabs button.on{background:var(--green);color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}.mbox{background:#fff;border-radius:10px;padding:14px;max-width:560px;width:100%;max-height:92vh;overflow:auto;text-align:center}.mbox img{max-width:100%;max-height:60vh;border-radius:6px;border:1px solid var(--line)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.stat{background:var(--chip);padding:10px;border-radius:8px;font-weight:800}
 .stat span{display:block;font-size:1.6rem;font-family:"Lilita One",sans-serif;font-weight:400}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.mbox{background:#fff;border-radius:10px;padding:14px;max-width:560px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.mbox img{max-width:100%;max-height:60vh;border-radius:6px;border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -52,27 +56,30 @@ button:disabled{opacity:.5}:focus-visible{outline:3px solid var(--gold);outline-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-/* ====== PASTE YOUR FIREBASE VALUES BETWEEN THE QUOTES ====== */
 var CFG = {
   apiKey: "AIzaSyDicZFEniLotoBZyGv3kAM840bbbPvuAME",
   authDomain: "fsc-it-hangout.firebaseapp.com",
   projectId: "fsc-it-hangout",
   appId: "1:843038589358:web:ec59765ce0787119b0083f"
 };
-/* =========================================================== */
-var FEE = "₦3,500";
+/* ====== EMAIL ALERTS: paste your free Web3Forms key between the quotes ====== */
+var NOTIFY_KEY = "7611a8eb-2e6b-4fd8-a933-058cad9661fe";
+/* =========================================================================== */
+var PRICE = 3500, MAXQ = 5, ACCT = "8162265273";
 var app = document.getElementById('app');
 function $(s){ return document.querySelector(s); }
+function naira(n){ return '₦' + n.toLocaleString(); }
 function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function msg(title, text){ app.innerHTML = '<section class="panel"><h2>' + title + '</h2><p>' + text + '</p></section>'; }
 
-var NOCFG = Object.keys(CFG).some(function(k){ return /PASTE/.test(CFG[k]); });
-if (!NOCFG && typeof firebase === 'undefined') {
-  msg('Could not load', 'Check your internet connection and refresh the page.');
-} else {
-  try { start(); } catch (e) { msg('Something went wrong', esc(e.message)); }
+function notify(name, phone, id, link) {
+  if (/PASTE/.test(NOTIFY_KEY)) return Promise.resolve();
+  return fetch('https://api.web3forms.com/submit', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ access_key: NOTIFY_KEY, subject: 'New ticket request: ' + name, from_name: 'After I.T Hangout',
+      name: name, whatsapp: '+' + phone, expected_amount: naira(PRICE), ticket_id: id, message: 'New request waiting for approval. Open your dashboard: ' + link })
+  }).catch(function(){});
 }
-
 function compress(file) {
   return new Promise(function(res, rej) {
     var fr = new FileReader();
@@ -92,6 +99,23 @@ function compress(file) {
     fr.readAsDataURL(file);
   });
 }
+/* Makes old and new records look the same: qty, names, used[] and status */
+function norm(r) {
+  var q = r.qty || 1, names = (r.names && r.names.length) ? r.names.slice() : [r.name], used = (r.used && r.used.length) ? r.used.slice() : [];
+  while (names.length < q) names.push('Guest of ' + r.name);
+  while (used.length < q) used.push(r.status === 'used');
+  r.qty = q; r.names = names; r.used = used;
+  if (r.status === 'used') r.status = 'approved';
+  return r;
+}
+function allUsed(r){ return r.used.every(Boolean); }
+
+var NOCFG = Object.keys(CFG).some(function(k){ return /PASTE/.test(CFG[k]); });
+if (!NOCFG && typeof firebase === 'undefined') {
+  msg('Could not load', 'Check your internet connection and refresh the page.');
+} else {
+  try { start(); } catch (e) { msg('Something went wrong', esc(e.message)); }
+}
 
 function start() {
   var db = null, auth = null;
@@ -101,21 +125,31 @@ function start() {
   var isAdmin = q.has('admin') || location.hash === '#admin' || /\/admin\/?$/.test(location.pathname);
   var normPhone = function(p){ p = p.replace(/\D/g, ''); return p.indexOf('234') === 0 ? p : '234' + p.replace(/^0/, ''); };
   var newCode = function(){ var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = 'FSC27-'; var r = crypto.getRandomValues(new Uint8Array(6)); for (var i = 0; i < 6; i++) s += a[r[i] % 32]; return s; };
-  var waLink = function(t){ return 'https://wa.me/' + t.phone + '?text=' + encodeURIComponent('Hi ' + t.name + '! 🎉 Your ticket for After I.T Hangout (28th Nov, 2PM, Lions’ Lounge) is confirmed.\nOpen and download your ticket: ' + base + '?t=' + t.id); };
+  var codeOf = function(id, qty, i){ return qty === 1 ? id : id + '-' + (i + 1); };
+  var waLink = function(t){ return 'https://wa.me/' + t.phone + '?text=' + encodeURIComponent('Hi ' + t.name + '! 🎉 Your ' + (t.qty > 1 ? t.qty + ' tickets are' : 'ticket is') + ' confirmed for After I.T Hangout (28th Nov, 2PM, Lions’ Lounge).\nOpen and download ' + (t.qty > 1 ? 'them' : 'it') + ' here: ' + base + '?t=' + t.id); };
 
   if (NOCFG && (isAdmin || q.get('t'))) msg('Not connected yet', 'The admin dashboard and tickets switch on once the four Firebase values are pasted into the CFG block at the top of this file.');
   else if (isAdmin) admin(); else if (q.get('t')) ticketPage(q.get('t')); else home();
 
   /* ---------- GUEST PAGE ---------- */
   function home() {
-    app.innerHTML = (NOCFG ? '<div class="pay" style="margin-bottom:12px">Preview mode: this is how the site looks. Add your Firebase values to switch on ticket requests.</div>' : '') + '<section class="hero"><small>FSC Class’ 27 presents</small><h1>AFTER I.T<br>HANGOUT</h1><span class="tag">Good Vibes, Great People!</span></section>' +
-    '<section class="facts"><div class="fact"><span>Date</span>28th Nov 2026</div><div class="fact"><span>Time</span>2PM</div><div class="fact"><span>Venue</span>Lions’ Lounge, Under G, Ogbomoso</div><div class="fact"><span>Fee</span>' + FEE + '</div></section>' +
-    '<section class="panel"><h2>Get your ticket</h2><div class="pay">1. Send ' + FEE + ' to:<br>Faith Oluwanifemi Alade · 8162265273 · PalmPay<br>2. Fill the form below and tap “Get ticket”.</div>' +
-    '<form id="f"><label for="n">Full name</label><input id="n" autocomplete="name"><label for="p">WhatsApp number</label><input id="p" inputmode="tel" placeholder="08012345678">' +
+    app.innerHTML = (NOCFG ? '<div class="pay" style="margin-bottom:12px">Preview mode: this is how the site looks. Add your Firebase values to switch on ticket requests.</div>' : '') +
+    '<section class="hero"><small>FSC Class’ 27 presents</small><h1>AFTER I.T<br>HANGOUT</h1><span class="tag">Good Vibes, Great People!</span></section>' +
+    '<section class="facts"><div class="fact"><span>Date</span>28th Nov 2026</div><div class="fact"><span>Time</span>2PM</div><div class="fact"><span>Venue</span>Lions’ Lounge, Under G, Ogbomoso</div><div class="fact"><span>Fee</span>' + naira(PRICE) + '</div></section>' +
+    '<section class="panel"><h2>Get your ticket</h2>' +
+    '<div class="pay"><b>How to pay</b><br>1. Send ' + naira(PRICE) + ' to:<br>Faith Oluwanifemi Alade<br>PalmPay · <span id="ac">' + ACCT + '</span><button type="button" id="cp">Copy</button><br>2. Upload your receipt and tap Get ticket.</div>' +
+    '<form id="f"><label for="n">Your full name</label><input id="n" autocomplete="name" maxlength="60">' +
+    '<label for="p">WhatsApp number</label><input id="p" inputmode="tel" placeholder="08012345678">' +
+    '<div class="pay" id="tot">Amount to pay: <b>' + naira(PRICE) + '</b></div>' +
     '<label for="r">Payment receipt (screenshot or photo)</label><input id="r" type="file" accept="image/*">' +
     '<div class="err" id="e" role="alert"></div><button class="big" id="b">Get ticket</button>' +
     '<p class="note">Your ticket appears on the next page once your payment is confirmed. Keep that page open or save its link.</p></form></section>' +
     '<p class="note" style="text-align:center"><a href="?admin">Organiser login</a></p>';
+    $('#cp').onclick = function() {
+      var b = this;
+      if (navigator.clipboard) navigator.clipboard.writeText(ACCT).then(function(){ b.textContent = 'Copied ✓'; }, function(){ window.prompt('Copy the number:', ACCT); });
+      else window.prompt('Copy the number:', ACCT);
+    };
     $('#f').onsubmit = function(ev) {
       ev.preventDefault();
       var name = $('#n').value.trim(), digits = $('#p').value.replace(/\D/g, '');
@@ -128,30 +162,42 @@ function start() {
       compress($('#r').files[0])
         .then(function(img){ return db.collection('receipts').doc(id).set({ img: img }); })
         .then(function(){ return db.collection('tickets').doc(id).set({ name: name, phone: phone, status: 'pending', rcpt: true, created: firebase.firestore.FieldValue.serverTimestamp() }); })
+        .then(function(){ return Promise.race([notify(name, phone, id, base + '?admin'), new Promise(function(r){ setTimeout(r, 3000); })]); })
         .then(function(){ location.href = base + '?t=' + id; })
         .catch(function(e){
-          $('#e').textContent = e.code === 'permission-denied' ? 'Not set up yet: the database rules are missing.' : (e.message === 'bad' || e.message === 'big') ? 'Could not read that image. Try a screenshot of the receipt.' : 'Could not submit (' + (e.code || 'network') + '). Try again.';
+          $('#e').textContent = e.code === 'permission-denied' ? 'Not set up yet: the database rules need updating.' : (e.message === 'bad' || e.message === 'big') ? 'Could not read that image. Try a screenshot of the receipt.' : 'Could not submit (' + (e.code || 'network') + '). Try again.';
           $('#b').disabled = false; });
     };
   }
 
   /* ---------- TICKET PAGE ---------- */
   function ticketPage(id) {
-    var last = null, user = null;
+    var last = null, user = null, only = parseInt(q.get('n'), 10) || 0;
     function draw() {
       if (last === null) return msg('Loading', 'One moment…');
       if (!last.exists) return msg('Ticket not found', 'Check the link you were sent.');
-      var t = last.data();
-      if (t.status === 'pending') return msg('Payment being confirmed', 'Hi ' + esc(t.name) + ', we have your request. This page updates by itself when you are approved. Save this link: <b>' + esc(base + '?t=' + id) + '</b>');
-      if (t.status === 'rejected') return msg('Request not approved', 'We could not confirm your payment. Please contact the organisers.');
-      app.innerHTML = (t.status === 'used' ? '<div class="bn used">ALREADY USED. Do not admit.</div>' : (user ? '<div class="bn ok">VALID TICKET</div>' : '')) +
-      '<div class="ticketwrap"><div class="ticket" id="t"><div class="tmain"><div class="club">FSC Class’ 27 presents</div><h3>AFTER I.T HANGOUT</h3><div class="guest">' + esc(t.name) + '</div>' +
-      '<div class="tmeta"><div><b>Date</b>28th Nov 2026</div><div><b>Time</b>2PM</div><div><b>Venue</b>Lions’ Lounge, Under G, Ogbomoso</div><div><b>Music</b>MC Mayor · DJ Starry</div></div></div>' +
-      '<div class="tstub"><span class="badge">ADMIT ONE</span><div class="qr" id="qr"></div><code>' + esc(id) + '</code></div></div></div>' +
-      '<p><button id="dl" class="big">Download ticket</button> ' + (user && t.status === 'approved' ? '<button id="use" class="big no">Mark as used</button>' : '') + '</p>';
-      new QRCode($('#qr'), { text: base + '?t=' + id, width: 92, height: 92 });
-      $('#dl').onclick = function(){ html2canvas($('#t'), { scale: 2, backgroundColor: null }).then(function(c){ var a = document.createElement('a'); a.href = c.toDataURL(); a.download = id + '.png'; a.click(); }); };
-      if ($('#use')) $('#use').onclick = function(){ db.collection('tickets').doc(id).update({ status: 'used' }); };
+      var t = norm(last.data());
+      if (t.status === 'pending') return msg('Payment being confirmed', 'Hi ' + esc(t.name) + ', we have your request for ' + t.qty + ' ticket' + (t.qty > 1 ? 's' : '') + '. This page updates by itself when you are approved. Save this link: <b>' + esc(base + '?t=' + id) + '</b>');
+      if (t.status === 'rejected') return msg('Request not approved', 'We could not confirm your payment, or this ticket was cancelled. Please contact the organisers.');
+      if (t.status === 'removed') return msg('Ticket cancelled', 'This ticket is no longer valid. Please contact the organisers.');
+      var h = '', idx = [];
+      for (var i = 0; i < t.qty; i++) if (!only || only === i + 1) idx.push(i);
+      idx.forEach(function(i) {
+        var code = codeOf(id, t.qty, i), u = t.used[i];
+        h += (u ? '<div class="bn used">ALREADY USED. Do not admit.</div>' : (user && only ? '<div class="bn ok">VALID TICKET</div>' : '')) +
+        '<div class="ticketwrap"><div class="ticket" id="t' + i + '"><div class="tmain"><div class="club">FSC Class’ 27 presents</div><h3>AFTER I.T HANGOUT</h3><div class="guest">' + esc(t.names[i]) + '</div>' +
+        '<div class="tmeta"><div><b>Date</b>28th Nov 2026</div><div><b>Time</b>2PM</div><div><b>Venue</b>Lions’ Lounge, Under G, Ogbomoso</div><div><b>Music</b>MC Mayor · DJ Starry</div></div></div>' +
+        '<div class="tstub"><span class="badge">ADMIT ONE</span><div class="qr" id="qr' + i + '"></div><code>' + esc(code) + '</code></div></div></div>' +
+        '<p><button class="dl" data-i="' + i + '">Download ticket' + (t.qty > 1 ? ' ' + (i + 1) : '') + '</button> ' + (user && !u ? '<button class="no us" data-i="' + i + '">Mark as used</button>' : '') + '</p>';
+      });
+      app.innerHTML = h;
+      idx.forEach(function(i){ new QRCode($('#qr' + i), { text: base + '?t=' + id + '&n=' + (i + 1), width: 92, height: 92 }); });
+      Array.prototype.forEach.call(document.querySelectorAll('.dl'), function(b) {
+        b.onclick = function(){ var i = b.dataset.i; html2canvas($('#t' + i), { scale: 2, backgroundColor: null }).then(function(c){ var a = document.createElement('a'); a.href = c.toDataURL(); a.download = codeOf(id, t.qty, +i) + '.png'; a.click(); }); };
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.us'), function(b) {
+        b.onclick = function(){ var u = t.used.slice(); u[+b.dataset.i] = true; db.collection('tickets').doc(id).update({ used: u }); };
+      });
     }
     db.collection('tickets').doc(id).onSnapshot(function(d){ last = d; draw(); }, function(){ last = { exists: false }; draw(); });
     auth.onAuthStateChanged(function(u){ user = u; if (last) draw(); });
@@ -175,40 +221,72 @@ function start() {
     };
   }
   function dash() {
-    var rows = [], tab = 'pending', term = '';
+    var rows = [], tab = 'pending', term = '', busy = {};
+    var TABS = ['pending', 'approved', 'used', 'rejected', 'all', 'archived'], TL = { used: 'checked in' };
     app.innerHTML = '<section class="panel"><div class="row" style="border:0;padding:0"><h2>Admin</h2><button class="gray" id="out">Log out</button></div>' +
     '<div class="stats" id="st"></div><div class="tabs" id="tb"></div><input id="s" placeholder="Search name, number or ticket ID" aria-label="Search"><div id="ls"></div></section>';
     $('#out').onclick = function(){ auth.signOut(); };
-    var count = function(s){ return rows.filter(function(r){ return r.status === s; }).length; };
+    function inTab(r) {
+      if (tab === 'archived') return !!r.hidden;
+      if (r.hidden) return false;
+      if (tab === 'all') return true;
+      if (tab === 'used') return r.status === 'approved' && allUsed(r);
+      if (tab === 'approved') return r.status === 'approved' && !allUsed(r);
+      return r.status === tab;
+    }
     function paintTop() {
-      var ok = count('approved') + count('used');
-      $('#st').innerHTML = '<div class="stat"><span>' + count('pending') + '</span>Pending</div><div class="stat"><span>' + ok + '</span>Approved</div><div class="stat"><span>' + count('used') + '</span>Checked in</div><div class="stat"><span>₦' + (ok * 3500).toLocaleString() + '</span>Expected</div>';
-      $('#tb').innerHTML = ['pending', 'approved', 'used', 'rejected', 'all'].map(function(s){ return '<button data-tab="' + s + '" class="' + (tab === s ? 'on' : '') + '">' + s + '</button>'; }).join('');
+      var L = rows.filter(function(r){ return r.status !== 'removed'; }), ap = L.filter(function(r){ return r.status === 'approved'; });
+      var tix = ap.reduce(function(a, r){ return a + r.qty; }, 0), inn = ap.reduce(function(a, r){ return a + r.used.filter(Boolean).length; }, 0);
+      $('#st').innerHTML = '<div class="stat"><span>' + L.filter(function(r){ return r.status === 'pending'; }).length + '</span>Pending</div><div class="stat"><span>' + tix + '</span>Approved</div><div class="stat"><span>' + inn + '</span>Checked in</div><div class="stat"><span>' + naira(tix * PRICE) + '</span>Expected money</div>';
+      $('#tb').innerHTML = TABS.map(function(s){ return '<button data-tab="' + s + '" class="' + (tab === s ? 'on' : '') + '">' + (TL[s] || s) + '</button>'; }).join('');
+    }
+    function B(cls, a, id, label, i) { return '<button class="' + cls + '" data-a="' + a + '" data-id="' + id + '"' + (i !== undefined ? ' data-i="' + i + '"' : '') + '>' + label + '</button>'; }
+    function clearBtn(list) {
+      return (list.length && (tab === 'approved' || tab === 'used' || tab === 'rejected')) ? '<div style="margin:10px 0"><button class="gray" data-a="clearall">Clear all ' + (TL[tab] || tab) + ' (' + list.length + ') from view</button></div>' : '';
     }
     function paintList() {
-      var list = rows.filter(function(r){ return (tab === 'all' || r.status === tab) && (r.name + r.id + r.phone).toLowerCase().indexOf(term) > -1; });
-      $('#ls').innerHTML = list.map(function(r){
-        return '<div class="row"><div><b>' + esc(r.name) + '</b><small>' + esc(r.phone) + ' · ' + esc(r.id) + (r.created ? ' · ' + r.created.toDate().toLocaleString() : '') + '</small></div><div class="acts">' +
-        (r.rcpt ? '<button data-a="rc" data-id="' + r.id + '" style="background:#8a5a00">View receipt</button>' : '') +
-        (r.status === 'pending' || r.status === 'rejected' ? '<button class="wa" data-a="ok" data-id="' + r.id + '">Approve &amp; send</button>' : '') +
-        (r.status === 'pending' ? '<button class="no" data-a="no" data-id="' + r.id + '">Reject</button>' : '') +
-        (r.status === 'approved' ? '<button class="wa" data-a="send" data-id="' + r.id + '">Send on WhatsApp</button><button data-a="use" data-id="' + r.id + '">Mark used</button>' : '') +
-        (r.status === 'used' ? '<span class="badge">Checked in</span>' : '') + '</div></div>';
+      var list = rows.filter(function(r){ return inTab(r) && (r.name + r.id + r.phone + r.names.join(' ')).toLowerCase().indexOf(term) > -1; });
+      $('#ls').innerHTML = clearBtn(list) + list.map(function(r) {
+        var b = '', st = '';
+        if (r.rcpt) b += B('rc', 'rc', r.id, 'View receipt');
+        if (r.hidden) b += B('gray', 'unhide', r.id, 'Restore');
+        else {
+          if (r.status === 'pending' || r.status === 'rejected') b += B('wa', 'ok', r.id, 'Approve &amp; send');
+          if (r.status === 'pending') b += B('no', 'no', r.id, 'Reject');
+          if (r.status === 'approved') {
+            b += B('wa', 'send', r.id, 'Send on WhatsApp');
+            r.used.forEach(function(u, i){ if (!u) b += B('', 'use', r.id, r.qty === 1 ? 'Mark used' : 'Check in #' + (i + 1), i); });
+            b += B('no', 'revoke', r.id, 'Revoke');
+          }
+          if (r.status === 'approved' || r.status === 'rejected') b += B('gray', 'hide', r.id, 'Clear');
+          b += B('rm', 'rm', r.id, 'Remove from totals');
+        }
+        if (r.status === 'approved' && allUsed(r)) st = ' <span class="badge">Checked in</span>';
+        if (r.status === 'removed') st = ' <span class="badge">Removed</span>';
+        return '<div class="row"><div><b>' + esc(r.name) + '</b> · ' + naira(PRICE) + st +
+          '<small>' + esc(r.phone) + ' · ' + esc(r.id) + (r.created ? ' · ' + r.created.toDate().toLocaleString() : '') + '</small>' +
+          (r.qty > 1 ? '<small>Tickets: ' + r.names.map(esc).join(', ') + '</small>' : '') + '</div><div class="acts">' + b + '</div></div>';
       }).join('') || '<p class="note">Nothing here yet.</p>';
     }
     $('#s').oninput = function(e){ term = e.target.value.toLowerCase(); paintList(); };
     $('#tb').onclick = function(e){ var b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; paintTop(); paintList(); } };
-    function act(a, r) {
+    function act(a, r, i) {
+      if (busy[r.id]) return;
       var ref = db.collection('tickets').doc(r.id);
-      if (a === 'ok') { window.open(waLink(r), '_blank'); ref.update({ status: 'approved' }); }
+      function upd(o){ busy[r.id] = 1; ref.update(o).catch(function(e){ alert('Could not save: ' + (e.code || e.message)); }).then(function(){ delete busy[r.id]; }); }
+      if (a === 'ok') { if (r.status === 'approved') { alert('Already approved.'); return; } window.open(waLink(r), '_blank'); upd({ status: 'approved' }); }
       if (a === 'send') window.open(waLink(r), '_blank');
-      if (a === 'no') ref.update({ status: 'rejected' });
-      if (a === 'use') ref.update({ status: 'used' });
+      if (a === 'no') upd({ status: 'rejected' });
+      if (a === 'use') { var u = r.used.slice(); u[i] = true; upd({ used: u }); }
+      if (a === 'revoke' && confirm('Cancel this approval? The tickets will stop working at the door.')) upd({ status: 'rejected' });
+      if (a === 'rm' && confirm('Cancel this and remove it from the money total? It moves to the Archived tab and you can restore it later.')) upd({ status: 'removed', hidden: true });
+      if (a === 'hide') upd({ hidden: true });
+      if (a === 'unhide') upd(r.status === 'removed' ? { status: 'pending', hidden: false } : { hidden: false });
     }
     function modal(r, img) {
       var m = document.createElement('div'); m.className = 'modal';
-      var open = r.status === 'pending' || r.status === 'rejected';
-      m.innerHTML = '<div class="mbox"><b>' + esc(r.name) + '</b> · ' + esc(r.phone) + '<p class="note">Expected ' + FEE + ' to PalmPay. Match the name and amount.</p>' +
+      var open = !r.hidden && (r.status === 'pending' || r.status === 'rejected');
+      m.innerHTML = '<div class="mbox"><b>' + esc(r.name) + '</b> · ' + esc(r.phone) + '<p class="note">Expect <b>' + naira(PRICE) + '</b> to PalmPay. Match the name and amount.</p>' +
         (img ? '<img src="' + img + '" alt="Payment receipt">' : '<p class="err">No receipt found.</p>') +
         '<div class="acts" style="justify-content:center;margin-top:12px">' + (open ? '<button class="wa" data-m="ok">Approve &amp; send</button><button class="no" data-m="no">Reject</button>' : '') + '<button class="gray" data-m="x">Close</button></div></div>';
       m.onclick = function(e) { var k = e.target.dataset.m; if (e.target === m || k === 'x') { m.remove(); return; } if (k) { act(k, r); m.remove(); } };
@@ -216,12 +294,18 @@ function start() {
     }
     $('#ls').onclick = function(e) {
       var b = e.target.closest('[data-a]'); if (!b) return;
+      if (b.dataset.a === 'clearall') {
+        var tgt = rows.filter(function(x){ return inTab(x) && x.status !== 'removed'; });
+        if (!tgt.length || !confirm('Clear ' + tgt.length + ' guests from view? Their tickets stay valid and the money still counts. You can restore them from the Archived tab.')) return;
+        var bt = db.batch(); tgt.slice(0, 450).forEach(function(x){ bt.update(db.collection('tickets').doc(x.id), { hidden: true }); }); bt.commit(); return;
+      }
       var r = rows.filter(function(x){ return x.id === b.dataset.id; })[0], a = b.dataset.a;
+      if (!r) return;
       if (a === 'rc') { db.collection('receipts').doc(r.id).get().then(function(d){ modal(r, d.exists ? d.data().img : null); }).catch(function(){ modal(r, null); }); return; }
-      act(a, r);
+      act(a, r, +b.dataset.i);
     };
     unsub = db.collection('tickets').orderBy('created', 'desc').onSnapshot(function(s) {
-      rows = s.docs.map(function(d){ var o = d.data(); o.id = d.id; return o; });
+      rows = s.docs.map(function(d){ var o = d.data(); o.id = d.id; return norm(o); });
       paintTop(); paintList();
     }, function(e) {
       app.innerHTML = '<section class="panel"><h2>Cannot open dashboard</h2><p>' + (e.code === 'permission-denied'
